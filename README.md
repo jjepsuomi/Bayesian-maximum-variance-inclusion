@@ -7,4 +7,4 @@ Python and Jupyter notebook implementations of the BMVI sampling method with rid
 - X.txt -- contains a 900x3 data matrix corresponding to the input predictor features. 
 - y.txt -- contains a 900x1 data vector corresponding to the output values from a Gaussian mixture model function. 
 - bmvi_toolbox.py/bmvi_toolbox.ipynb -- contains the relevant Python functions needed to implement BMVI sampling and modeling. 
-- sampling_demo.py/sampling_demo.ipynb -- contains a Python notebook demo implementation case of BMVI sampling. 
+- sampling_demo.py/sampling_demo.ipynb -- contains a Python demo implementation case of the BMVI sampling. 

@@ -1,16 +1,15 @@
-
 #**************************************************************
 #**************************************************************
 #**************************************************************
 # 
 # - This Python file contains a demonstration of the Bayesian 
 # maximum variance inclusion (BMVI) sampling. The BMVI is 
-# compared against simple random sampling (SRS) with synthetic
-# data generated from a random Gaussian mixture module function.
-# Both samplers are tested with the standard regularized least 
-# squares (RLS) prediction method with a linear kernel. 
-# Prediction performance and hyperparameter selection is 
-# implemented via 10-fold cross-validation. 
+# compared against simple random sampling (SRS) and local pivotal
+# method (LPM) with synthetic data generated from a random 
+# Gaussian mixture module function. Both samplers are tested
+# with the standard regularized least squares (RLS) prediction 
+# method with a linear kernel. Prediction performance and 
+# hyperparameter selection is implemented via 10-fold cross-validation. 
 # 
 # If one wishes to implement BMVI via other prediction methods
 # then the respective Hessian and gradient (see the corresponding
@@ -26,6 +25,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from bmvi_toolbox import *
+def warn(*args, **kwargs):
+    pass
+import warnings
+warnings.warn = warn
+get_ipython().run_line_magic('matplotlib', 'inline')
+
 
 # STEP 2: Load the synthetic data set generated from a random Gaussian mixture model function.
 
@@ -48,27 +53,32 @@ ax.set_title('Synthetic data set function (GMM)')
 ax.view_init(azim=45, elev=45)
 plt.show()
 
+
 # STEP 3: Implement SRS and BMVI sampling with the synthetic data using RLS prediction model. 
 
 # Do sampling. 
 print("Starting SRS sampling...\n")
 SRS_inclusion_index_set, SRS_generalization_error_list = SRS(X, y, len(y))
 print("Finished SRS sampling.\n")
+print("Starting LPM sampling...\n")
+initial_inclusion_probabilities = 0.99
+LPM_inclusion_index_set, LPM_generalization_error_list = LPM(X, y, len(y), initial_inclusion_probabilities)
+print("Finished LPM sampling.\n")
 print("Starting BMVI sampling...\n")
 BMVI_inclusion_index_set, BMVI_generalization_error_list = BMVI(X, y, len(y))
 print("Finished BMVI sampling, plotting the results...\n")
 
-# Plot the sampling performance results. 
+
+# STEP 4: Plot the sampling performance results. 
 fig = plt.figure(figsize=(10, 7))
 plt.plot(range(0, len(SRS_generalization_error_list)), SRS_generalization_error_list, linewidth=2)
+plt.plot(range(0, len(LPM_generalization_error_list)), LPM_generalization_error_list, 'g', linewidth=2)
 plt.plot(range(0, len(BMVI_generalization_error_list)), BMVI_generalization_error_list, 'r', linewidth=2)
 plt.grid(True)
 ax = plt.gca()
 ax.set_xlabel('Number of sampled data points')
 ax.set_ylabel('Average absolute prediction error')
-ax.set_title('Comparison of SRS/BMVI sampling methods with synthetic data')
-ax.legend(('SRS', 'BMVI'))
+ax.set_title('Comparison of SRS/LPM/BMVI sampling methods with synthetic GMM data')
+ax.legend(('SRS', 'LPM', 'BMVI'))
 plt.show()
-
-
 
